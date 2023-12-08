@@ -17,7 +17,7 @@ const CenterLayout: FC<Props> = ({
         <div
             onClick={void backdropOnClick}
             className={twMerge(
-                'w-100 min-h-screen flex justify-center items-center',
+                'w-100 min-h-screen flex justify-center items-center p-5',
                 backdropClassName,
             )}
             data-backdrop={true}
