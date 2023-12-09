@@ -17,21 +17,26 @@ const QuizQuestion: FC<Props> = ({
     num,
     title,
     options,
+    answer,
+    onSubmit = (selected) => console.log(selected),
     assets = null,
     elClassName = null,
     containerClassName = null,
 }) => {
+    const [isAnswered, setIsAnswered] = useState<boolean>(false);
     const [selected, setSelected] = useState<null | string>(null);
-    const onSubmit = () => {
-        console.log(selected);
-    };
     const optionsElements = options.map((option, i) =>
         assets ? (
             <Label
+                key={`options-${option}`}
                 htmlFor={`options-${option}`}
                 className={twMerge(
                     'aspect-square w-48 p-3 rounded-2xl shadow-lg transition-all border-4 border-primary relative overflow-hidden cursor-pointer bg-blur',
-                    selected === option ? 'shadow-primary' : 'shadow-none',
+                    selected === option
+                        ? 'shadow-primary'
+                        : 'shadow-transparent',
+                    isAnswered ? selected === option && 'shadow-red-500' : '',
+                    isAnswered && answer === option ? 'shadow-green-500' : '',
                     elClassName,
                 )}
                 style={{
@@ -40,6 +45,7 @@ const QuizQuestion: FC<Props> = ({
                 }}
             >
                 <RadioGroupItem
+                    disabled={isAnswered}
                     value={`${option}`}
                     id={`options-${option}`}
                     className={'bg-white drop-shadow-2xl'}
@@ -56,10 +62,16 @@ const QuizQuestion: FC<Props> = ({
             <div
                 className={twMerge(
                     'flex items-center space-x-2 justify-center',
+                    isAnswered ? selected === option && 'text-red-500' : '',
+                    isAnswered && answer === option ? 'text-green-500' : '',
                     elClassName,
                 )}
             >
-                <RadioGroupItem value={`${option}`} id={`options-${option}`} />
+                <RadioGroupItem
+                    value={`${option}`}
+                    id={`options-${option}`}
+                    disabled={isAnswered}
+                />
                 <Label htmlFor={`options-${option}`} className={'text-2xl'}>
                     {option}
                 </Label>
@@ -70,7 +82,9 @@ const QuizQuestion: FC<Props> = ({
         <Question
             num={num}
             title={title}
-            onSubmit={onSubmit}
+            onSubmit={() =>
+                isAnswered ? onSubmit(selected!) : setIsAnswered(true)
+            }
             submitDisabled={selected === null}
         >
             <RadioGroup

@@ -17,18 +17,19 @@ const SelectQuestion: FC<Props> = ({
     num,
     title,
     options,
+    answer,
     assets = null,
+    onSubmit = (selected) => console.log(selected),
     containerClassName = null,
     elClassName = null,
 }) => {
+    const [isAnswered, setIsAnswered] = useState<boolean>(false);
     const [selected, setSelected] = useState<string[]>([]);
     const addSelected = (value: string) =>
         setSelected((prev) => [...prev, value]);
     const removeSelected = (value: string) =>
         setSelected((prev) => prev.filter((v) => v !== value));
-    const onSubmit = () => {
-        console.log(selected);
-    };
+
     const optionsElements = options.map((option, i) =>
         assets ? (
             <Label
@@ -38,6 +39,12 @@ const SelectQuestion: FC<Props> = ({
                     selected.includes(option)
                         ? 'shadow-primary'
                         : 'shadow-none',
+                    isAnswered
+                        ? selected.includes(option) && 'shadow-red-500'
+                        : '',
+                    isAnswered && answer.includes(option)
+                        ? 'shadow-green-500'
+                        : '',
                     elClassName,
                 )}
                 style={{
@@ -46,6 +53,7 @@ const SelectQuestion: FC<Props> = ({
                 }}
             >
                 <Checkbox
+                    disabled={isAnswered}
                     value={`${option}`}
                     id={`options-${option}`}
                     onCheckedChange={(checked) => {
@@ -65,10 +73,17 @@ const SelectQuestion: FC<Props> = ({
             <div
                 className={twMerge(
                     'flex items-center space-x-2 justify-center',
+                    isAnswered
+                        ? selected.includes(option) && 'text-red-500'
+                        : '',
+                    isAnswered && answer.includes(option)
+                        ? 'text-green-500'
+                        : '',
                     elClassName,
                 )}
             >
                 <Checkbox
+                    disabled={isAnswered}
                     value={`${option}`}
                     id={`options-${option}`}
                     onCheckedChange={(checked) => {
@@ -85,7 +100,9 @@ const SelectQuestion: FC<Props> = ({
         <Question
             num={num}
             title={title}
-            onSubmit={onSubmit}
+            onSubmit={() =>
+                isAnswered ? onSubmit(selected!) : setIsAnswered(true)
+            }
             submitDisabled={selected === null}
         >
             <div

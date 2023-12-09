@@ -2,10 +2,12 @@ export type QuestionsAnswersTypes =
     | {
           type: 'quiz';
           answer: string;
+          onSubmit?: (selected: string) => void;
       }
     | {
           type: 'select';
           answer: string[];
+          onSubmit?: (selected: string[]) => void;
       };
 
 export type QuestionsAnswersStorageRecordType = {

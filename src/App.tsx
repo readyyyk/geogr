@@ -3,40 +3,33 @@ import SelectQuestion from '@/components/SelectQuestion.tsx';
 import QuizQuestion from '@/components/QuizQuestion.tsx';
 
 import data from './assets/QUESTIONS.ts';
+import {useState} from 'react';
 
 const App = () => {
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const currentQuestion = data[currentQuestionIndex];
     return (
         <CenterLayout>
-            {/*<QuizQuestion*/}
-            {/*    num={1}*/}
-            {/*    title={'Какой сейчас год?'}*/}
-            {/*    options={['2020', '2021', '2022', '2023']}*/}
-            {/*    assets={[*/}
-            {/*        'https://r-randimg-py.fly.dev/picsum/2020/128x128',*/}
-            {/*        'https://r-randimg-py.fly.dev/picsum/2021/128x128',*/}
-            {/*        'https://r-randimg-py.fly.dev/picsum/2022/128x128',*/}
-            {/*        'https://r-randimg-py.fly.dev/picsum/2023/128x128',*/}
-            {/*    ]}*/}
-            {/*    answer={'2023'}*/}
-            {/*    type={'quiz'}*/}
-            {/*/>*/}
-            {/*<SelectQuestion*/}
-            {/*    num={1}*/}
-            {/*    title={'Какой сейчас год?'}*/}
-            {/*    options={['2020', '2021', '2022', '2023']}*/}
-            {/*    assets={[*/}
-            {/*        'https://r-randimg-py.fly.dev/picsum/2020/128x128',*/}
-            {/*        'https://r-randimg-py.fly.dev/picsum/2021/128x128',*/}
-            {/*        'https://r-randimg-py.fly.dev/picsum/2022/128x128',*/}
-            {/*        'https://r-randimg-py.fly.dev/picsum/2023/128x128',*/}
-            {/*    ]}*/}
-            {/*    answer={['2023']}*/}
-            {/*    type={'select'}*/}
-            {/*/>*/}
-            {data[0].type === 'quiz' ? (
-                <QuizQuestion num={0 + 1} {...data[0]} />
+            {currentQuestion.type === 'quiz' ? (
+                <QuizQuestion
+                    key={`question-${currentQuestionIndex}`}
+                    onSubmit={(selected) => {
+                        setCurrentQuestionIndex((prev) => prev + 1);
+                        console.log(selected);
+                    }}
+                    num={currentQuestionIndex + 1}
+                    {...currentQuestion}
+                />
             ) : (
-                <SelectQuestion num={0 + 1} {...data[0]} />
+                <SelectQuestion
+                    key={`question-${currentQuestionIndex}`}
+                    onSubmit={(selected) => {
+                        setCurrentQuestionIndex((prev) => prev + 1);
+                        console.log(selected);
+                    }}
+                    num={currentQuestionIndex + 1}
+                    {...currentQuestion}
+                />
             )}
         </CenterLayout>
     );
