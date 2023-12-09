@@ -131,4 +131,11 @@ const QUESTIONS: Questions = [
     },
 ];
 
+export const CORRECT_NUMBER = QUESTIONS.reduce((acc, question) => {
+    if (question.type === 'quiz') {
+        return acc + 1;
+    }
+    return acc + question.answer.length;
+}, 0);
+
 export default QUESTIONS;

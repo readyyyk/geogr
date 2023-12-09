@@ -10,10 +10,7 @@ export type QuestionsAnswersTypes =
           onSubmit?: (selected: string[]) => void;
       };
 
-export type QuestionsAnswersStorageRecordType = {
-    num: string;
-    answer: QuestionsAnswersTypes;
-};
+export type QuestionsAnswersStorageRecordType = QuestionsAnswersTypes;
 export type QuestionsAnswersStorageType =
     Array<QuestionsAnswersStorageRecordType>;
 

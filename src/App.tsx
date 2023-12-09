@@ -3,35 +3,57 @@ import SelectQuestion from '@/components/SelectQuestion.tsx';
 import QuizQuestion from '@/components/QuizQuestion.tsx';
 
 import data from './assets/QUESTIONS.ts';
-import {useState} from 'react';
+import {useContext, useState} from 'react';
+import {AnswersContext, AnswersProvider} from '@/AnswersContext.tsx';
+import {AnswersContextType} from '@/types/answers.ts';
+import Result from '@/Result.tsx';
 
-const App = () => {
+const Application = () => {
+    const {addAnswer} = useContext(AnswersContext) as AnswersContextType;
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const currentQuestion = data[currentQuestionIndex];
     return (
         <CenterLayout>
-            {currentQuestion.type === 'quiz' ? (
-                <QuizQuestion
-                    key={`question-${currentQuestionIndex}`}
-                    onSubmit={(selected) => {
-                        setCurrentQuestionIndex((prev) => prev + 1);
-                        console.log(selected);
-                    }}
-                    num={currentQuestionIndex + 1}
-                    {...currentQuestion}
-                />
+            {currentQuestionIndex < data.length ? (
+                currentQuestion.type === 'quiz' ? (
+                    <QuizQuestion
+                        {...currentQuestion}
+                        num={currentQuestionIndex + 1}
+                        key={`question-${currentQuestionIndex}`}
+                        onSubmit={(selected) => {
+                            setCurrentQuestionIndex((p) => p + 1);
+                            addAnswer({
+                                type: 'quiz',
+                                answer: selected,
+                            });
+                        }}
+                    />
+                ) : (
+                    <SelectQuestion
+                        {...currentQuestion}
+                        num={currentQuestionIndex + 1}
+                        key={`question-${currentQuestionIndex}`}
+                        onSubmit={(selected) => {
+                            setCurrentQuestionIndex((p) => p + 1);
+                            addAnswer({
+                                type: 'select',
+                                answer: selected,
+                            });
+                        }}
+                    />
+                )
             ) : (
-                <SelectQuestion
-                    key={`question-${currentQuestionIndex}`}
-                    onSubmit={(selected) => {
-                        setCurrentQuestionIndex((prev) => prev + 1);
-                        console.log(selected);
-                    }}
-                    num={currentQuestionIndex + 1}
-                    {...currentQuestion}
-                />
+                <Result />
             )}
         </CenterLayout>
+    );
+};
+
+const App = () => {
+    return (
+        <AnswersProvider>
+            <Application />
+        </AnswersProvider>
     );
 };
 
