@@ -16,8 +16,8 @@ export type SelectQuestion = QuestionsAnswersTypes & {
 
 export type QuestionProps = {
     num: number;
-    containerClassName?: string | null;
-    elClassName?: string | null;
+    containerClassName?: string;
+    elClassName?: string;
 };
 
 export type Question = QuizQuestion | SelectQuestion;

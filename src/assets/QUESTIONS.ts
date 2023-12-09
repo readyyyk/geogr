@@ -2,6 +2,23 @@ import {Questions} from '@/types/questions.ts';
 
 const QUESTIONS: Questions = [
     {
+        type: 'select',
+        title: 'What is the primary function of the hydrosphere?',
+        options: [
+            "To regulate the Earth's climate",
+            'To provide a habitat for living organisms',
+            'To generate electricity',
+            'To store carbon dioxide',
+        ],
+        assets: [
+            'https://r-randimg-py.fly.dev/picsum/1/128x128',
+            'https://r-randimg-py.fly.dev/picsum/2/128x128',
+            'https://r-randimg-py.fly.dev/picsum/3/128x128',
+            'https://r-randimg-py.fly.dev/picsum/4/128x128',
+        ],
+        answer: ["To regulate the Earth's climate"],
+    },
+    {
         type: 'quiz',
         title: 'What are the main components of the hydrosphere?',
         options: [

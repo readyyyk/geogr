@@ -3,10 +3,12 @@ import {
     QuestionProps,
     SelectQuestion as ISelectQuestion,
 } from '@/types/questions.ts';
-import {Label} from '@/components/ui/label.tsx';
-import Question from '@/components/Question.tsx';
+import Question, {
+    createContainerClassName as createCN,
+    LabelImage,
+    LabelText,
+} from '@/components/Question.tsx';
 import {Checkbox} from '@/components/ui/checkbox.tsx';
-import {twMerge} from 'tailwind-merge';
 
 type Props = ISelectQuestion &
     QuestionProps & {
@@ -20,8 +22,8 @@ const SelectQuestion: FC<Props> = ({
     answer,
     assets = null,
     onSubmit = (selected) => console.log(selected),
-    containerClassName = null,
-    elClassName = null,
+    containerClassName,
+    elClassName,
 }) => {
     const [isAnswered, setIsAnswered] = useState<boolean>(false);
     const [selected, setSelected] = useState<string[]>([]);
@@ -30,88 +32,51 @@ const SelectQuestion: FC<Props> = ({
     const removeSelected = (value: string) =>
         setSelected((prev) => prev.filter((v) => v !== value));
 
-    const optionsElements = options.map((option, i) =>
-        assets ? (
-            <Label
-                htmlFor={`options-${option}`}
-                className={twMerge(
-                    'aspect-square w-48 p-3 rounded-2xl shadow-lg transition-all border-4 border-primary relative overflow-hidden cursor-pointer bg-blur',
-                    selected.includes(option)
-                        ? 'shadow-primary'
-                        : 'shadow-none',
-                    isAnswered
-                        ? selected.includes(option) && 'shadow-red-500'
-                        : '',
-                    isAnswered && answer.includes(option)
-                        ? 'shadow-green-500'
-                        : '',
-                    elClassName,
-                )}
-                style={{
-                    backgroundImage: 'url(' + assets[i] + ')',
-                    backgroundSize: 'cover',
+    const optionsElements = options.map((option, i) => {
+        const checkbox = (
+            <Checkbox
+                disabled={isAnswered}
+                value={`${option}`}
+                id={`options-${option}`}
+                onCheckedChange={(checked) => {
+                    checked ? addSelected(option) : removeSelected(option);
                 }}
+                className={assets ? 'bg-white' : 'bg-transparent'}
+            />
+        );
+        return assets ? (
+            <LabelImage
+                option={option}
+                asset={assets[i]}
+                isAnswered={isAnswered}
+                elClassName={elClassName}
+                isCorrect={answer.includes(option)}
+                isSelected={selected.includes(option)}
             >
-                <Checkbox
-                    disabled={isAnswered}
-                    value={`${option}`}
-                    id={`options-${option}`}
-                    onCheckedChange={(checked) => {
-                        checked ? addSelected(option) : removeSelected(option);
-                    }}
-                    className={'bg-white drop-shadow-2xl'}
-                />
-                <h2
-                    className={
-                        'text-lg backdrop-blur text-black text-center absolute bottom-0 left-0 right-0 p-2 bg-white bg-opacity-20 rounded-b-lg'
-                    }
-                >
-                    {option}
-                </h2>
-            </Label>
+                {checkbox}
+            </LabelImage>
         ) : (
-            <div
-                className={twMerge(
-                    'flex items-center space-x-2 justify-center',
-                    isAnswered
-                        ? selected.includes(option) && 'text-red-500'
-                        : '',
-                    isAnswered && answer.includes(option)
-                        ? 'text-green-500'
-                        : '',
-                    elClassName,
-                )}
+            <LabelText
+                option={option}
+                isAnswered={isAnswered}
+                elClassName={elClassName}
+                isCorrect={answer.includes(option)}
+                isSelected={selected.includes(option)}
             >
-                <Checkbox
-                    disabled={isAnswered}
-                    value={`${option}`}
-                    id={`options-${option}`}
-                    onCheckedChange={(checked) => {
-                        checked ? addSelected(option) : removeSelected(option);
-                    }}
-                />
-                <Label htmlFor={`options-${option}`} className={'text-2xl'}>
-                    {option}
-                </Label>
-            </div>
-        ),
-    );
+                {checkbox}
+            </LabelText>
+        );
+    });
     return (
         <Question
             num={num}
             title={title}
+            submitDisabled={selected === null}
             onSubmit={() =>
                 isAnswered ? onSubmit(selected!) : setIsAnswered(true)
             }
-            submitDisabled={selected === null}
         >
-            <div
-                className={twMerge(
-                    'grid grid-cols-1 md:grid-cols-2 justify-center',
-                    assets && 'place-items-center gap-y-8',
-                    containerClassName,
-                )}
-            >
+            <div className={createCN(assets, containerClassName)}>
                 {...optionsElements}
             </div>
         </Question>
