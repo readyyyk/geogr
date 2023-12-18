@@ -4,11 +4,11 @@ import {
     CardContent,
     CardFooter,
     Card,
-} from '@/components/ui/card';
+} from '@/components/ui/card.tsx';
 import {Badge} from '@/components/ui/badge.tsx';
 import {AnswersContextType} from '@/types/answers.ts';
 import {AnswersContext} from '@/AnswersContext.tsx';
-import {useContext} from 'react';
+import {FC, useContext} from 'react';
 import QUESTIONS, {CORRECT_NUMBER} from '@/assets/QUESTIONS.ts';
 import {Button} from '@/components/ui/button.tsx';
 import {
@@ -18,11 +18,19 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip.tsx';
 
-const Result = () => {
+interface Props {
+    mode: 'all' | 'captain';
+    back: () => void;
+}
+const Result: FC<Props> = ({back, mode}) => {
     const {answers} = useContext(AnswersContext) as AnswersContextType;
     console.log(answers);
+
     const correctNumber = answers.reduce((acc, cur, i) => {
         const correct = QUESTIONS[i].answer;
+        if (cur.type === 'pure') {
+            return acc;
+        }
         if (cur.type === 'quiz') {
             return acc + (cur.answer === correct ? 1 : 0);
         }
@@ -30,19 +38,17 @@ const Result = () => {
     }, 0);
     const incorrectNumber = answers.reduce((acc, cur, i) => {
         const correct = QUESTIONS[i].answer;
+        if (cur.type === 'pure') {
+            return acc;
+        }
         if (cur.type === 'quiz') {
             return acc;
         }
         return acc + cur.answer.filter((v) => !correct.includes(v)).length;
     }, 0);
 
-    return (
-        <Card>
-            <CardHeader className="pb-4">
-                <CardTitle className="text-center text-4xl font-bold">
-                    Quiz Results
-                </CardTitle>
-            </CardHeader>
+    const NumericResults =
+        mode === 'all' ? (
             <CardContent className="justify-center flex space-x-5">
                 <Badge className="text-green-500 bg-green-50 px-4 py-1 font-mono text-2xl font-bold rounded-full">
                     {correctNumber}/{CORRECT_NUMBER}
@@ -69,9 +75,19 @@ const Result = () => {
                     </TooltipProvider>
                 )}
             </CardContent>
+        ) : null;
+
+    return (
+        <Card className={''}>
+            <CardHeader className="pb-4">
+                <CardTitle className="text-center text-4xl font-bold">
+                    Результаты
+                </CardTitle>
+            </CardHeader>
+            {NumericResults}
             <CardFooter className="flex justify-center space-x-4">
-                <Button variant={'outline'} onClick={() => location.reload()}>
-                    Take Another Try
+                <Button variant={'outline'} onClick={back}>
+                    Назад
                 </Button>
             </CardFooter>
         </Card>

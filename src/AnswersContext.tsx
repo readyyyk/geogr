@@ -16,6 +16,7 @@ const AnswersProvider: FC<Props> = ({children}) => {
             value={{
                 answers: state,
                 addAnswer: (answer) => setState((prev) => [...prev, answer]),
+                clearAnswers: () => setState([]),
             }}
         >
             {children}

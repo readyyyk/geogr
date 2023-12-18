@@ -33,7 +33,7 @@ export const LabelImage: FC<LabelProps & {asset: string}> = ({
         <Label
             htmlFor={`options-${option}`}
             className={twMerge(
-                'aspect-square max-w-[12rem] w-[35dvw] md:w-48 p-3 rounded-2xl shadow-lg transition-all border-4 border-primary relative overflow-hidden cursor-pointer bg-blur',
+                'aspect-square max-w-[12rem] w-[35dvw] md:w-48 p-3 rounded-2xl shadow-lg transition-all border-4 border-primary relative overflow-hidden cursor-pointer bg-blur bg-center',
                 isSelected ? 'shadow-primary' : 'shadow-none',
                 isAnswered
                     ? isSelected && 'shadow-lg shadow-red-500 border-red-500'
@@ -99,7 +99,7 @@ export const createContainerClassName = (
 interface Props {
     num: number;
     title: string;
-    children: ReactNode;
+    children?: ReactNode;
     submitDisabled: boolean;
     onSubmit: (...props: any) => any;
 }
@@ -116,7 +116,13 @@ const Question: FC<Props> = ({
         <Card>
             <CardHeader>
                 <CardDescription>Вопрос №{num}</CardDescription>
-                <CardTitle className={'text-center'}>{title}</CardTitle>
+                <CardTitle
+                    className={'text-center'}
+                    // @ts-ignore
+                    style={{textWrap: 'balance'}}
+                >
+                    {title}
+                </CardTitle>
             </CardHeader>
             <CardContent className={'max-w-lg m-auto'}>{children}</CardContent>
             <CardFooter className={'flex justify-center'}>

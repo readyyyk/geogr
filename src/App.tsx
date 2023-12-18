@@ -1,49 +1,41 @@
+import {AnswersContext} from './AnswersContext.tsx';
+import {AnswersProvider} from '@/AnswersContext.tsx';
 import CenterLayout from '@/components/CenterLayout.tsx';
-import SelectQuestion from '@/components/SelectQuestion.tsx';
-import QuizQuestion from '@/components/QuizQuestion.tsx';
-
-import data from './assets/QUESTIONS.ts';
+import {Button} from '@/components/ui/button.tsx';
 import {useContext, useState} from 'react';
-import {AnswersContext, AnswersProvider} from '@/AnswersContext.tsx';
 import {AnswersContextType} from '@/types/answers.ts';
-import Result from '@/Result.tsx';
+import AllMode from '@/AllMode.tsx';
+import CaptainMode from '@/CaptainMode.tsx';
 
 const Application = () => {
-    const {addAnswer} = useContext(AnswersContext) as AnswersContextType;
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const currentQuestion = data[currentQuestionIndex];
+    const [page, setPage] = useState<'all' | 'captain' | 'intro'>('intro');
+    const {clearAnswers} = useContext(AnswersContext) as AnswersContextType;
+    const handleAll = () => {
+        clearAnswers();
+        setPage('all');
+    };
+    const handleCaptains = () => {
+        setPage('captain');
+    };
     return (
         <CenterLayout>
-            {currentQuestionIndex < data.length ? (
-                currentQuestion.type === 'quiz' ? (
-                    <QuizQuestion
-                        {...currentQuestion}
-                        num={currentQuestionIndex + 1}
-                        key={`question-${currentQuestionIndex}`}
-                        onSubmit={(selected) => {
-                            setCurrentQuestionIndex((p) => p + 1);
-                            addAnswer({
-                                type: 'quiz',
-                                answer: selected,
-                            });
-                        }}
-                    />
-                ) : (
-                    <SelectQuestion
-                        {...currentQuestion}
-                        num={currentQuestionIndex + 1}
-                        key={`question-${currentQuestionIndex}`}
-                        onSubmit={(selected) => {
-                            setCurrentQuestionIndex((p) => p + 1);
-                            addAnswer({
-                                type: 'select',
-                                answer: selected,
-                            });
-                        }}
-                    />
-                )
+            {page === 'intro' ? (
+                <div className={'flex flex-col items-center gap-4'}>
+                    <Button variant={'default'} size={'xl'} onClick={handleAll}>
+                        Играют все!
+                    </Button>
+                    <Button
+                        variant={'outline'}
+                        size={'xl'}
+                        onClick={handleCaptains}
+                    >
+                        Капитаны доигрывают!
+                    </Button>
+                </div>
+            ) : page === 'all' ? (
+                <AllMode back={() => setPage('intro')} />
             ) : (
-                <Result />
+                <CaptainMode back={() => setPage('intro')} />
             )}
         </CenterLayout>
     );
